@@ -5,21 +5,14 @@ const gtfsUtils = require('./gtfsBindingsBuilders')
 const GtfsRealtimeBindings = require('gtfs-realtime-bindings')
 
 function getVehicleArray (translocResponse, agencyId) {
-  const resposeVehicleData = get(translocResponse, 'body.data', {})
-  return get(resposeVehicleData, agencyId, [])
+  return translocResponse.body?.vehicles || {};
 }
 
 function createTranslocCall (agencyId, transocAPIKey) {
   var apiCall = unirest('GET', constants.translocVehicleEndpoint)
 
   apiCall.query({
-    callback: 'call',
     agencies: agencyId
-  })
-
-  apiCall.headers({
-    'x-rapidapi-host': constants.translocAPIHost,
-    'x-rapidapi-key': transocAPIKey
   })
 
   return apiCall
@@ -41,7 +34,7 @@ function getTripUpdateFeedMessage (translocRes, agencyId) {
     var tripUpdate = gtfsUtils.createTripUpdate(vehicle)
 
     var feedEntity = new GtfsRealtimeBindings.transit_realtime.FeedEntity({
-      id: vehicle.vehicle_id,
+      id: String(vehicle.id),
       tripUpdate: tripUpdate
     })
     feedMessage.entity.push(feedEntity)
@@ -67,7 +60,7 @@ function getVehiclePositionFeedMessage (translocRes, agencyId) {
 
     var feedEntity = new GtfsRealtimeBindings.transit_realtime.FeedEntity({
       vehicle: vehiclePos,
-      id: vehicle.vehicle_id
+      id: String(vehicle.id)
     })
     feedMessage.entity.push(feedEntity)
   })

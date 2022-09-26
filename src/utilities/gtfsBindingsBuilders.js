@@ -3,15 +3,20 @@ const conversions = require('./conversions')
 
 function createVehiclePos (busData) {
   var position = new GtfsRealtimeBindings.transit_realtime.Position({
-    latitude: busData.location.lat,
-    longitude: busData.location.lng,
+    latitude: busData.position[0],
+    longitude: busData.position[1],
     bearing: busData.heading,
     speed: conversions.mphToMetersPerSec(busData.speed)
   })
 
-  var vehicleDesc = createVehicleDescriptor(busData.vehicle_id)
+  var vehicleDesc = createVehicleDescriptor(busData.id)
+
+  const trip = new GtfsRealtimeBindings.transit_realtime.TripDescriptor({
+    trip_id: busData.gtfs_trip_id,
+  });
 
   var vehiclePos = new GtfsRealtimeBindings.transit_realtime.VehiclePosition({
+    trip,
     position: position,
     timestamp: conversions.timestampToUnix(busData.last_updated_on),
     vehicle: vehicleDesc,
@@ -23,7 +28,7 @@ function createVehiclePos (busData) {
 
 function createVehicleDescriptor (id) {
   return new GtfsRealtimeBindings.transit_realtime.VehicleDescriptor({
-    id: id
+    id: String(id)
   })
 }
 
@@ -68,8 +73,8 @@ function createStopTimeUpdates (arrivalEstimates) {
 
 function createTripDescriptor (tripId, routeId) {
   return new GtfsRealtimeBindings.transit_realtime.TripDescriptor({
-    tripId: tripId,
-    routeId: routeId
+    tripId: String(tripId),
+    routeId: String(routeId)
   })
 }
 
