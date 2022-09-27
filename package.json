@@ -13,6 +13,8 @@
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
   },
   "dependencies": {
+    "@sentry/node": "^7.13.0",
+    "@sentry/tracing": "^7.13.0",
     "cheerio": "^1.0.0-rc.12",
     "express": "^4.17.1",
     "gtfs-realtime-bindings": "^0.0.5",
