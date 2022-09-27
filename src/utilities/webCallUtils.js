@@ -3,6 +3,13 @@ const unirest = require('unirest')
 const constants = require('./constants')
 const gtfsUtils = require('./gtfsBindingsBuilders')
 const GtfsRealtimeBindings = require('gtfs-realtime-bindings')
+const {Request} = require('node-fetch')
+
+function buildRequest(path, agencyId, options={}) {
+  const url = new URL(`${constants.translocBaseEndpoint}${path}`);
+  url.searchParams.append('agencies', agencyId);
+  return new Request(url, options);
+}
 
 function getVehicleArray (translocResponse, agencyId) {
   return translocResponse.body?.vehicles || {};
@@ -72,5 +79,6 @@ module.exports = {
   getVehicleArray,
   createTranslocCall,
   getTripUpdateFeedMessage,
-  getVehiclePositionFeedMessage
+  getVehiclePositionFeedMessage,
+  buildRequest
 }

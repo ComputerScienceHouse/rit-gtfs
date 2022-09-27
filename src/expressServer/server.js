@@ -3,9 +3,17 @@ const express = require('express')
 const serverless = require('serverless-http')
 const constants = require('../utilities/constants')
 const webCallUtils = require('../utilities/webCallUtils')
+const scheduleRouter = require('./scheduleRouter')
 const app = express()
 
 const router = express.Router()
+
+app.use((req, res, next) => {
+  if (typeof req.context == "undefined") {
+    req.context = {};
+  }
+  next();
+})
 
 router.get('/tripupdates/:agencyId(\\d+)', (req, res, next) => {
   var agencyId = req.params.agencyId
@@ -42,6 +50,17 @@ router.get('/vehiclepositions/:agencyId(\\d+)', (req, res, next) => {
     console.log('Sent Vehicle Positions of size ' + encodedMessage.length + ' for agency ' + agencyId + ' at ' + new Date().toISOString())
   })
 })
+
+router.use('/schedule/:agencyId(\\d+)', (req, res, next) => {
+  console.log("Chom!!!");
+  var agencyId = req.params.agencyId
+  req.context.agencyId = agencyId
+  if (!agencyId) {
+    throw new Error('Agency ID must be defined')
+  }
+  console.log("asdf", req.context);
+  next();
+}, scheduleRouter);
 
 app.use('/.netlify/functions/server', router)
 
