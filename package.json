@@ -7,10 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "netlify-lambda build src/expressServer",
-    "start": "node src/server-local.js",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
+    "start": "node src/server-local.js"
   },
   "dependencies": {
     "@sentry/node": "^7.13.0",
@@ -25,13 +22,14 @@
     "unirest": "^0.6.0"
   },
   "devDependencies": {
-    "coveralls": "^3.0.9",
-    "eslint": "^6.7.1",
-    "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-node": "^10.0.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
-    "jest": "^24.9.0"
+    "eslint": "^8.24.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.3.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.0.1",
+    "prettier": "^2.7.1"
   }
 }

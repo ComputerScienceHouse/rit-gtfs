@@ -1,6 +1,5 @@
 const express = require("express");
 const fetch = require("node-fetch");
-const constants = require("../utilities/constants");
 const csv = require("../utilities/csv");
 const cheerio = require("cheerio");
 const {buildRequest} = require("../utilities/webCallUtils");
@@ -170,7 +169,7 @@ const SCHEDULE_OVERRIDES = {
 };
 
 router.get("/trips.txt", async (req, res) => {
-  const {fall, spring} = generateDates();
+  const {fall} = generateDates();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const {routes} = await fetch(
@@ -209,7 +208,6 @@ const STOP_NAMES = {
   "Perkins Rd.": "Perkins Road",
   NTID: "LBJ",
   "175 Jefferson": "175 Jefferson (Radisson)",
-  "Perkins Rd.": "Perkins Road",
   "UC West": "UC West Inbound",
   "Tech Park Dr": "Tech Park I/B",
   "Marketplace Mall": "Market Place Mall",
@@ -219,7 +217,7 @@ const STOP_NAMES = {
 function parseDayTime(time, ctx) {
   const [_, hourLocal, minute, ampm] = /^(\d+):(\d+) *([ap]m)$/i.exec(time);
   let hour = parseInt(hourLocal);
-  if (ampm.toLowerCase() === "pm" && hour != 12) {
+  if (ampm.toLowerCase() === "pm" && hour !== 12) {
     hour += 12;
   }
   if (ampm.toLowerCase() === "am" && hour === 12) {
@@ -243,7 +241,6 @@ function parseDayTime(time, ctx) {
 }
 
 router.get("/stop_times.txt", async (req, res) => {
-  const {fall, spring} = generateDates();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -283,9 +280,9 @@ router.get("/stop_times.txt", async (req, res) => {
           const stops = thead.children
             .filter(
               (node) =>
-                node.type == "tag" &&
-                node.name == "th" &&
-                node.attribs.scope == "col"
+                node.type === "tag" &&
+                node.name === "th" &&
+                node.attribs.scope === "col"
             )
             .map((node) => $.text([node]).trim())
             .map((stopName) => STOP_NAMES[stopName] || stopName)
@@ -294,32 +291,29 @@ router.get("/stop_times.txt", async (req, res) => {
           const rows = tbody.children
             .filter(
               (node) =>
-                node.type == "tag" &&
-                node.name == "tr" &&
-                node.attribs.class?.trim() != "blue-bus"
+                node.type === "tag" &&
+                node.name === "tr" &&
+                node.attribs.class?.trim() !== "blue-bus"
             )
             .map((node) => {
               return node.children
                 .filter(
                   (node) =>
-                    node.type == "tag" &&
-                    node.name == "td" &&
-                    node.attribs.scope != "row"
+                    node.type === "tag" &&
+                    node.name === "td" &&
+                    node.attribs.scope !== "row"
                 )
                 .map((node) => $.text([node]).trim())
                 .map((time) =>
                   time
                     .split("/")
                     .map((time) => time.trim())
-                    .filter((time) => time != "." && time != "")
+                    .filter((time) => time !== "." && time !== "")
                     .map((time) => parseDayTime(time, ctx))
                     .sort((a, b) => a.totalMinutes - b.totalMinutes)
                     .map((time) => time.text)
                 );
             });
-          const routeType = contents.includes("This route runs weekends.")
-            ? "weekend"
-            : "weekday";
           let timeIndex = 0;
           return rows.flatMap((row) => {
             return row.flatMap((times, index) =>
