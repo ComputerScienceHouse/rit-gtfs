@@ -1,9 +1,9 @@
 {
-  "name": "transloc-to-gtfs-real-time",
+  "name": "rit-gtfs",
   "version": "1.0.0",
-  "description": "tool to convert transloc json to gtfs real time",
+  "description": "tool to convert transloc json to gtfs real time (locked to RIT)",
   "main": "index.js",
-  "author": "Jonathon Powell",
+  "author": "Mary Strodl",
   "license": "MIT",
   "scripts": {
     "build": "netlify-lambda build src/expressServer",
